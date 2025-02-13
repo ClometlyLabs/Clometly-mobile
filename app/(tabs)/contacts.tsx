@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Platform } from 'react-native';
+import { StyleSheet, Image, Platform, View, Text } from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
@@ -9,6 +9,14 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export default function TabTwoScreen() {
   return (
+        <View style={{ flex: 1 }}>
+               <View style={{ flexDirection: 'row', alignItems: 'center', position: 'absolute', left: 0, top: -710, right: 0, bottom: 0, zIndex: 1000
+                }}>
+               <Image source={ require('@/assets/images/logoclometly.png') } style={{ width: 24, height: 24, marginTop: 40, marginLeft: 20}} />
+              <Text style={{ fontSize: 30, marginTop: 40,marginLeft: 10, position: 'relative', color: '#FFFF' }}>
+                Clometly
+              </Text>
+              </View>
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
       headerImage={
@@ -20,7 +28,7 @@ export default function TabTwoScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
+        <ThemedText type="title">Aca deberia aparecer contactos</ThemedText>
       </ThemedView>
       <ThemedText>This app includes example code to help you get started.</ThemedText>
       <Collapsible title="File-based routing">
@@ -92,6 +100,7 @@ export default function TabTwoScreen() {
         })}
       </Collapsible>
     </ParallaxScrollView>
+    </View>
   );
 }
 

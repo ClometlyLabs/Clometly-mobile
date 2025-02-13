@@ -6,7 +6,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
-export default function TabFourScreen() {
+export default function TabThreeScreen() {
   return (
         <View style={{ flex: 1 }}>
                <View style={{ flexDirection: 'row', alignItems: 'center', position: 'absolute', left: 0, top: -710, right: 0, bottom: 0, zIndex: 1000
@@ -19,15 +19,10 @@ export default function TabFourScreen() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
       headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
+        <Image source={require('@/assets/images/clometly.png')} style={{ alignSelf: 'center' }} />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Aca deberia aparecer mensajes, chats, etc</ThemedText>
+        <ThemedText type="title">Tocando acá deberiamos tener la posibilidad de buscar un trabajo</ThemedText>
       </ThemedView>
       <ThemedText>This app includes example code to help you get started.</ThemedText>
       <Collapsible title="File-based routing">

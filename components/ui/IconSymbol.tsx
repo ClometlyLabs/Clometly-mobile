@@ -14,7 +14,8 @@ const MAPPING = {
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
   'message.fill': 'email',
-  'person.2.fill': 'people',} as Partial<
+  'person.2.fill': 'people',
+} as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],
     React.ComponentProps<typeof MaterialIcons>['name']
