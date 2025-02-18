@@ -6,7 +6,21 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import Logotipo from '@/components/ui/logotipo';
+import { Button } from 'react-native-paper';
+import authCache from '@/store/authCache';
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import * as Updates from 'expo-updates';
+
+// Llama a Restart() cuando necesites reiniciar la aplicación
+
 export default function TabFourScreen() {
+  const navigation = useNavigation();
+  const logout = () => {
+          authCache.remove('token');
+          Updates.reloadAsync();
+          console.log('Sesion cerrada');
+  }
+
   return (
         <View style={{ flex: 1 }}>
               <Logotipo />
@@ -93,6 +107,7 @@ export default function TabFourScreen() {
         })}
       </Collapsible>
     </ParallaxScrollView>
+    <Button mode="contained" style={styles.button} onPress={logout}> Cerrar sesion </Button>
     </View>
   );
 }
@@ -107,5 +122,11 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     gap: 8,
+  },
+  button: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    zIndex: 1,
   },
 });

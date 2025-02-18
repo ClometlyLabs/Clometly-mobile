@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import { TextInput, Button, HelperText, DefaultTheme } from 'react-native-paper';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import  Axios  from 'axios';
-import { Cache } from "react-native-cache";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
+import authCache from '@/store/authCache';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -15,18 +12,26 @@ const LoginScreen = () => {
   const [error, setError] = useState('');
   const navigation = useNavigation<any>();
 
-  const cache = new Cache({
-    namespace: "myapp",
-    policy: {
-        maxEntries: 50000, // número máximo de entradas, si no se especifica, puede tener entradas ilimitadas
-        stdTTL: 0 // tiempo de vida (TTL) estándar en segundos, por defecto: 0 (ilimitado)
-    },
-    backend: AsyncStorage
-  });
+
+  useEffect(() => {
+    const getToken = async () => {
+      const token = await authCache.get('token');
+      if (token) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: '(tabs)', params: { screen: 'index' } }],
+          })
+        );
+      }
+    };
+    getToken();
+  }, []);
 
   const handleLogin = async () => {
     try {
-      // Autenticar al usuario con el servidor
+      // Autenticar al usuario con el servidor 
+      // Es muy importante aclarar la dirección Ip no es localhost sino explicitamente la dirección Ip de la maquina
       const response = await Axios.post("http://192.168.100.10:4000/auth/signin", {
         email,
         password,
@@ -34,7 +39,7 @@ const LoginScreen = () => {
       const token = response.data.acces_token;
       
       // Guardar el token en el almacenamiento local
-      await cache.set('token', token);
+      await authCache.set('token', token);
 
       // Restablecer el historial de navegación y navegar a la pantalla de pestañas
       navigation.dispatch(
