@@ -1,17 +1,53 @@
+import axios from 'axios';
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, DefaultTheme } from 'react-native-paper';
-
+import authCache from '@/store/authCache';
+import * as Updates from 'expo-updates';
 
 const ClotPoster = () => {
   const [clotPost, setClotPost] = useState('');
 
+  const [token, setToken] = useState('');
+
+  useEffect(() => {
+    const getToken = async () => {
+      const token = await authCache.get('token');
+      if (token) {
+        setToken(token);
+      }else{
+        Updates.reloadAsync();
+      }
+    };
+    getToken();
+  }, []);
+
 
   const handlePost = () => {
     console.log('Post:', clotPost);
-    setClotPost('');
+  
+    axios.post(
+      'http://192.168.100.10:4000/post',
+      {
+        content: clotPost
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    .then(response => {
+      console.log('Post response:', response.data);
+      setClotPost('');
+    })
+    .catch(error => {
+      console.error('Post error:', error);
+    });
   };
+  
 
   return (
       <View style={styles.container}>

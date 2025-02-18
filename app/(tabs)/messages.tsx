@@ -11,7 +11,6 @@ import authCache from '@/store/authCache';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import * as Updates from 'expo-updates';
 
-// Llama a Restart() cuando necesites reiniciar la aplicación
 
 export default function TabFourScreen() {
   const navigation = useNavigation();

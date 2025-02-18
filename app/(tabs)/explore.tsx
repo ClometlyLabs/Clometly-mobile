@@ -3,7 +3,9 @@ import Logotipo from '@/components/ui/logotipo';
 import { View, Text, Image, TouchableWithoutFeedback, Keyboard, StyleSheet } from 'react-native';
 import ClotPoster from '@/components/clotPoster';
 import React from 'react';
+import { useEffect, useState } from 'react';
 import { FAB, Portal, Modal } from 'react-native-paper';
+import axios from 'axios';
 
 export default function Explore() {
     const styles = StyleSheet.create({
@@ -18,12 +20,17 @@ export default function Explore() {
     });
 
 
-    const [visible, setVisible] = React.useState(false);
+    const [visible, setVisible] = useState(false);
+
+    const [posts, setPosts] = useState([]);
+    
+    //Falta funcion para traer los posts
 
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
 
     const containerStyle = { backgroundColor: 'rgb(35, 37, 41)', padding: 20, margin: 10, borderRadius: 10 };
+
 
   return (
     <View style={{ flex: 1}}>
@@ -40,7 +47,10 @@ export default function Explore() {
             </Modal>
         </Portal>
         
-
+        
+        <View>
+            {}
+        </View>
         
 
     </View>
