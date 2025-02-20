@@ -1,59 +1,134 @@
-import { Image, StyleSheet, Platform, View } from 'react-native';
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import React, { useState, useRef, useCallback} from 'react';
+import { Image, StyleSheet, Text, Platform, View,  FlatList, Dimensions, ViewToken  } from 'react-native';
+import VideoPlayer from '@/components/VideoPlayer';
+import VideoInfo from '@/components/VideoInfo';
 import Logotipo from '@/components/ui/logotipo';
 
+const { height: WINDOW_HEIGHT } = Dimensions.get('window');
+
+const VIDEOS = [
+  {
+    id: '1',
+
+    uri: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    username: 'nature_lover',
+    description: '🌸 Spring is here! #nature #beautiful #spring',
+    likes: 1234,
+    comments: 123,
+    shares: 45,
+  },
+  {
+    id: '2',
+    uri: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+    username: 'yoga_life',
+    description: '🧘‍♀️ Morning yoga routine #yoga #wellness #morning',
+    likes: 2345,
+    comments: 234,
+    shares: 67,
+  },
+  {
+    id: '3',
+    uri: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    username: 'ocean_vibes',
+    description: '🌊 Ocean therapy #beach #waves #relaxing',
+    likes: 3456,
+    comments: 345,
+    shares: 89,
+  },
+];
+
 export default function HomeScreen() {
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const flatListRef = useRef<FlatList>(null);
+  
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 50,
+  });
+
+  const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+    if (viewableItems.length > 0) {
+      setActiveVideoIndex(viewableItems[0].index ?? 0);
+    }
+  }, []);
+
+  const getItemLayout = useCallback((_: any, index: number) => ({
+    length: WINDOW_HEIGHT,
+    offset: WINDOW_HEIGHT * index,
+    index,
+  }), []);
+
+  const renderItem = useCallback(({ item, index }: { item: typeof VIDEOS[0]; index: number }) => (
+    <View style={styles.videoContainer}>
+      <VideoPlayer uri={item.uri} isActive={index === activeVideoIndex} />
+      <VideoInfo
+        username={item.username}
+        description={item.description}
+        likes={item.likes}
+        comments={item.comments}
+        shares={item.shares}
+      />
+    </View>
+  ), [activeVideoIndex]);
+
+  const keyExtractor = useCallback((item: typeof VIDEOS[0]) => item.id, []);
+
   return (
     <View style={{ flex: 1 }}>
-      <Logotipo/>
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          position: 'absolute',
+          left: 0,
+          top: -1,
+          right: 0,
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}
+      >
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={require('@/assets/images/logoclometly.png')}
+          style={{ width: 24, height: 24, marginTop: 40, marginLeft: 20 }}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Este es tu inicio!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the HOLA tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-    </View>
+        <Text
+          style={{
+            fontSize: 30,
+            marginTop: 40,
+            marginLeft: 10,
+            color: '#FFFF',
+          }}
+        >
+          Clometly
+        </Text>
+      </View>
+
+      <FlatList
+        ref={flatListRef}
+        data={VIDEOS}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        pagingEnabled
+        showsVerticalScrollIndicator={false}
+        snapToInterval={WINDOW_HEIGHT}
+        snapToAlignment="start"
+        decelerationRate="fast"
+        getItemLayout={getItemLayout}
+        viewabilityConfig={viewabilityConfig.current}
+        onViewableItemsChanged={onViewableItemsChanged}
+        removeClippedSubviews
+        windowSize={3}
+        maxToRenderPerBatch={2}
+        initialNumToRender={1}
+        maintainVisibleContentPosition={{
+          minIndexForVisible: 0,
+        }}
+      />
+      </View>
+      
+
+
+   
+  
   );
 }
 
@@ -73,5 +148,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  videoContainer: {
+    height : WINDOW_HEIGHT,
+    backgroundColor: 'black',
   },
 });

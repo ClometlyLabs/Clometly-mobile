@@ -1,7 +1,7 @@
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import Logotipo from '@/components/ui/logotipo';
 import { View, FlatList, Text, Image, TouchableOpacity, Keyboard, StyleSheet } from 'react-native';
-import ClotPoster from '@/components/clotPoster';
+import ClotPoster from '@/components/ClotPoster';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { FAB, Portal, Modal, Divider, Icon, MD3Colors } from 'react-native-paper';
