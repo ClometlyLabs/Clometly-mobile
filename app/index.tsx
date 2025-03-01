@@ -6,6 +6,8 @@ import { useNavigation, CommonActions } from '@react-navigation/native';
 import  Axios  from 'axios';
 import authCache from '@/store/authCache';
 
+
+
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,7 +34,7 @@ const LoginScreen = () => {
     try {
       // Autenticar al usuario con el servidor 
       // Es muy importante aclarar la dirección Ip no es localhost sino explicitamente la dirección Ip de la maquina
-      const response = await Axios.post("http://192.168.100.10:4000/auth/signin", {
+      const response = await Axios.post(`${process.env.EXPO_PUBLIC_IP}/auth/signin`, {
         email,
         password,
       });
@@ -40,7 +42,7 @@ const LoginScreen = () => {
       
       // Guardar el token en el almacenamiento local
       await authCache.set('token', token);
-
+  
       // Restablecer el historial de navegación y navegar a la pantalla de pestañas
       navigation.dispatch(
         CommonActions.reset({
@@ -53,7 +55,6 @@ const LoginScreen = () => {
       console.error(error);
     }
   };
-
   return (
     <View style={{ flex: 1, backgroundColor: '#1f1f1f' }}>
       <Image source={require('@/assets/images/newbg.png')} style={{width: "100%", height: "50%", top: -100}} />

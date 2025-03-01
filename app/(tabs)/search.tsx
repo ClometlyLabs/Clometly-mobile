@@ -9,7 +9,7 @@ import Logotipo from '@/components/ui/logotipo';
 export default function TabThreeScreen() {
   return (
         <View style={{ flex: 1 }}>
-              <Logotipo/>
+              <Logotipo tipo="search"/>
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
       headerImage={

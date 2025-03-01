@@ -28,7 +28,7 @@ const ClotPoster = () => {
     console.log('Post:', clotPost);
   
     axios.post(
-      'http://192.168.100.10:4000/post',
+      `${process.env.EXPO_PUBLIC_IP}/post`,
       {
         content: clotPost
       },
@@ -41,10 +41,12 @@ const ClotPoster = () => {
     )
     .then(response => {
       console.log('Post response:', response.data);
+      
       setClotPost('');
     })
     .catch(error => {
       console.error('Post error:', error);
+      console.log(`Tu IP es ${process.env.EXPO_PUBLIC_IP}`);
     });
   };
   

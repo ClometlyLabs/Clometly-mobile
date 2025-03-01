@@ -74,33 +74,7 @@ export default function HomeScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          position: 'absolute',
-          left: 0,
-          top: -1,
-          right: 0,
-          zIndex: 1,
-          pointerEvents: 'none',
-        }}
-      >
-        <Image
-          source={require('@/assets/images/logoclometly.png')}
-          style={{ width: 24, height: 24, marginTop: 40, marginLeft: 20 }}
-        />
-        <Text
-          style={{
-            fontSize: 30,
-            marginTop: 40,
-            marginLeft: 10,
-            color: '#FFFF',
-          }}
-        >
-          Clometly
-        </Text>
-      </View>
+      <Logotipo tipo="index"/>
 
       <FlatList
         ref={flatListRef}
