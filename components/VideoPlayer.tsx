@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useCallback } from 'react';
-import { View, StyleSheet, Dimensions, Platform } from 'react-native';
-import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, Dimensions, Platform, TouchableWithoutFeedback, AppState, AppStateStatus } from 'react-native';
+import { Video, ResizeMode, Audio } from 'expo-av';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { height: WINDOW_HEIGHT } = Dimensions.get('window');
@@ -12,60 +12,71 @@ interface VideoPlayerProps {
 
 export default function VideoPlayer({ uri, isActive }: VideoPlayerProps) {
   const video = useRef<Video>(null);
+  // Guarda si el usuario quiere reproducir el video
+  const [isPlaying, setIsPlaying] = useState(isActive);
+  // Guarda si la app está en primer plano (active) o no
+  const [isAppActive, setIsAppActive] = useState(true);
 
-  const onPlaybackStatusUpdate = useCallback((status: AVPlaybackStatus) => {
-    if (!status.isLoaded) return;
-    
-    if (status.didJustFinish && Platform.OS === 'web') {
-      video.current?.setPositionAsync(0);
-    }
+  // Escucha el estado de la app y actualiza isAppActive
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
+      setIsAppActive(nextAppState === 'active');
+    });
+    return () => subscription.remove();
   }, []);
 
+  // Configura el audio para que no se mantenga activo en segundo plano
   useEffect(() => {
+    Audio.setAudioModeAsync({
+      staysActiveInBackground: false,
+      playsInSilentModeIOS: false,
+      allowsRecordingIOS: false,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: false,
+    });
+  }, []);
+
+  // Permite pausar o reanudar el video con tap
+  const togglePlayback = async () => {
     if (!video.current) return;
+    try {
+      const status = await video.current.getStatusAsync();
+      if (!status.isLoaded) return;
 
-    const loadAndPlayVideo = async () => {
-      try {
-        if (isActive) {
-          await video.current?.playAsync();
-        } else {
-          await video.current?.pauseAsync();
-          if (Platform.OS === 'web') {
-            await video.current?.setPositionAsync(0);
-          }
-        }
-      } catch (error) {
-        console.warn('Error controlling video:', error);
+      if (status.isPlaying) {
+        await video.current.pauseAsync();
+        setIsPlaying(false);
+      } else {
+        await video.current.playAsync();
+        setIsPlaying(true);
       }
-    };
-
-    loadAndPlayVideo();
-
-    return () => {
-      video.current?.pauseAsync();
-    };
-  }, [isActive]);
+    } catch (error) {
+      console.warn('Error toggling playback:', error);
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <Video
-        ref={video}
-        source={{ uri }}
-        style={styles.video}
-        resizeMode={ResizeMode.COVER}
-        isLooping
-        shouldPlay={isActive}
-        isMuted={Platform.OS === 'web'}
-        useNativeControls={false}
-        onPlaybackStatusUpdate={onPlaybackStatusUpdate}
-        onError={(error) => console.warn('Video error:', error)}
-      />
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.8)']}
-        style={styles.gradient}
-        pointerEvents="none"
-      />
-    </View>
+    <TouchableWithoutFeedback onPress={togglePlayback}>
+      <View style={styles.container}>
+        <Video
+          ref={video}
+          source={{ uri }}
+          style={styles.video}
+          resizeMode={ResizeMode.COVER}
+          isLooping
+          // Si la app no está activa, shouldPlay es false y el video se pausa
+          shouldPlay={isActive && isAppActive && isPlaying}
+          isMuted={Platform.OS === 'web'}
+          useNativeControls={false}
+          onError={(error) => console.warn('Video error:', error)}
+        />
+        <LinearGradient
+          colors={['transparent', 'rgba(0,0,0,0.8)']}
+          style={styles.gradient}
+          pointerEvents="none"
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 

@@ -107,6 +107,7 @@ export default function TabFourScreen() {
       </Collapsible>
     </ParallaxScrollView>
     <Button mode="contained" style={styles.button} onPress={logout}> Cerrar sesion </Button>
+    <Button mode="contained" style={{ position: 'absolute', bottom: 10, left: 20, zIndex: 1 }} onPress={() => navigation.dispatch(CommonActions.navigate('profile'))}> Tu perfil </Button>
     </View>
   );
 }
